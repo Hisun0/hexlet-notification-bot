@@ -1,0 +1,20 @@
+{
+  "name": "homework-notification-bot",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "mongodb": "^6.2.0",
+    "puppeteer": "^21.4.1"
+  },
+  "dependencies": {
+    "firebase": "^10.5.2"
+  }
+}
