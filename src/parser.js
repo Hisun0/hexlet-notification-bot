@@ -42,15 +42,17 @@ const getCourseAssignments = async (page, course) => {
       const statusDescription = dateContainer
         .querySelector(".status-description")
         .textContent.trim();
+
       const statusDate = dateContainer
         .querySelector("span[data-tooltip]")
         .textContent.trim();
+      
       const status = `${statusDescription} ${statusDate}`;
-
       const dueDateContainer = li.querySelector(".assignment-date-due");
       const statusDueDate = dueDateContainer
         .querySelector("span[data-tooltip]")
         .textContent.trim();
+      
       const due = `Срок ${statusDueDate}`;
 
       const isAvailableNow = (str) => {
@@ -75,7 +77,7 @@ const func = async (courseName) => {
   const course = courses[courseName];
 
   const browser = await puppeteer.launch({
-    headless: false, // значение false чисто для дебага
+    headless: false, // значение false чисто для дебага // хорош
     defaultViewport: null,
   });
 
@@ -89,3 +91,4 @@ const func = async (courseName) => {
 };
 
 console.log(await func("Прикладное программирование"));
+
