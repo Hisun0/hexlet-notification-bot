@@ -4,7 +4,7 @@ import { token } from "./config";
 
 const bot = new TelegramBot(token, {polling: true});
 
-// Для запуска бота пишем в консоль npm run dev (нужен nodemon потому что он удобный, я его по-моему на прод депенденси случайно записал)
+// Для запуска бота пишем в консоль npm run dev (нужен nodemon (npm i -D nodemon) потому что он удобный, я его по-моему на прод депенденси случайно записал)
 // https://t.me/HexletNotifyBot
 
 // Спойлер: ты будешь ебаться с закидыванием в бд либо объяснять мне
