@@ -1,6 +1,7 @@
 import TelegramBot from "node-telegram-bot-api";
 
-const token = '6859858092:AAGb-Wvy26fKopXqMgTUs9N0gNZ9iQHepFo';
+import { token } from "./config"; 
+
 const bot = new TelegramBot(token, {polling: true});
 
 // Для запуска бота пишем в консоль npm run dev (нужен nodemon потому что он удобный, я его по-моему на прод депенденси случайно записал)
