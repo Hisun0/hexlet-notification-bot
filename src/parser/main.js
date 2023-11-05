@@ -1,7 +1,6 @@
 import puppeteer from "puppeteer";
 import config from "../../config.js";
 import parseLogic from "./parse-logic.js";
-import courses from "../../data/courses.js";
 
 const login = async (page) => {
   await page.goto(`https://lms.hexly.ru/`, {
@@ -24,12 +23,17 @@ const getCourseAssignments = async (page, id) => {
 
   const assignments = await page.evaluate(parseLogic); // получаем список заданий
 
-  return assignments.filter((el) => el !== null); // фильтруем от заданий, которые нам не подходят
+  const filteredAssignments = assignments.filter((el) => el !== null); // фильтруем от заданий, которые нам не подходят
+  filteredAssignments.forEach((element) => {
+    element.id = id;
+    return;
+  });
+  return filteredAssignments;
 };
 
-const func = async (courses) => {
+export const func = async (courses) => {
   const result = await Promise.all(
-    courses.map(async ({ id, name }) => {
+    courses.map(async ({ id }) => {
       const browser = await puppeteer.launch({
         headless: "new", // false - debug
         defaultViewport: null,
@@ -38,13 +42,12 @@ const func = async (courses) => {
       const page = await browser.newPage();
 
       await login(page);
-      const assignment = await getCourseAssignments(page, id, name);
+      const assignment = await getCourseAssignments(page, id);
 
       await browser.close();
       return assignment;
     })
   );
-  return result;
-};
 
-console.log(await func(courses));
+  return result.reduce((acc, el) => acc.concat(el));
+};
