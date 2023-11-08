@@ -1,25 +1,30 @@
-import puppeteer from "puppeteer";
-import config from "../../config.js";
-import parseLogic from "./parse-logic.js";
+import puppeteer from 'puppeteer';
+import config from '../../config.js';
+import parseLogic from './parse-logic.js';
+import Firebase from '../Firebase.js';
+import courses from '../../data/courses.js';
+
+const firebase = new Firebase(config);
+await firebase.auth();
 
 const login = async (page) => {
   await page.goto(`https://lms.hexly.ru/`, {
-    waitUntil: "domcontentloaded",
+    waitUntil: 'domcontentloaded',
   }); // заходим на страницу лмс
 
-  await page.type("#username", config.lmsAuth.email, { delay: 100 }); // вводим email
-  await page.type("#password", config.lmsAuth.password, { delay: 100 }); // вводим пароль
-  await page.click("#kc-login", { delay: 200 }); // нажимаем на кнопку логина
+  await page.type('#username', config.lmsAuth.email, { delay: 100 }); // вводим email
+  await page.type('#password', config.lmsAuth.password, { delay: 100 }); // вводим пароль
+  await page.click('#kc-login', { delay: 200 }); // нажимаем на кнопку логина
 
-  await page.waitForSelector("#dashboard_header_container"); // ждем пока прогрузится страница
+  await page.waitForSelector('#dashboard_header_container'); // ждем пока прогрузится страница
 };
 
 const getCourseAssignments = async (page, id) => {
   await page.goto(`https://lms.hexly.ru/courses/${id}/assignments`, {
-    waitUntil: "domcontentloaded",
+    waitUntil: 'domcontentloaded',
   });
 
-  await page.waitForSelector(".collectionViewItems");
+  await page.waitForSelector('.collectionViewItems');
 
   const assignments = await page.evaluate(parseLogic); // получаем список заданий
 
@@ -31,11 +36,11 @@ const getCourseAssignments = async (page, id) => {
   return filteredAssignments;
 };
 
-export const func = async (courses) => {
-  const result = await Promise.all(
+const parser = async (courses) => {
+  const parsedData = await Promise.all(
     courses.map(async ({ id }) => {
       const browser = await puppeteer.launch({
-        headless: "new", // false - debug
+        headless: 'new', // false - debug
         defaultViewport: null,
       });
 
@@ -49,5 +54,8 @@ export const func = async (courses) => {
     })
   );
 
-  return result.reduce((acc, el) => acc.concat(el));
+  return parsedData.reduce((acc, el) => acc.concat(el)); // убираем лишнюю вложенность
 };
+
+const result = await parser(courses);
+firebase.set(result, 'assignments');
