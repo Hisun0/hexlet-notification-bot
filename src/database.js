@@ -38,6 +38,6 @@ const getData = () => {
     });
 };
 
-// getData();
+getData();
 
 await writeUserData();
