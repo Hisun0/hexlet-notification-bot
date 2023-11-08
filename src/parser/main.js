@@ -25,7 +25,7 @@ const getCourseAssignments = async (page, id) => {
 
   const filteredAssignments = assignments.filter((el) => el !== null); // фильтруем от заданий, которые нам не подходят
   filteredAssignments.forEach((element) => {
-    element.id = id;
+    element.courseId = id;
     return;
   });
   return filteredAssignments;
