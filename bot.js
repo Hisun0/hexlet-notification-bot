@@ -1,101 +1,72 @@
 import TelegramBot from "node-telegram-bot-api";
 
-import { token } from "./config"; 
+import config from "./config.js"; 
+import { Keyboard } from "./src/classes.js";
+
+const token = config.token;
 
 const bot = new TelegramBot(token, {polling: true});
 
-// Для запуска бота пишем в консоль npm run dev (нужен nodemon (npm i -D nodemon) потому что он удобный, я его по-моему на прод депенденси случайно записал)
-// https://t.me/HexletNotifyBot
+bot.on ('message', async msg => {
 
-// Спойлер: ты будешь ебаться с закидыванием в бд либо объяснять мне
+  const { text, chat }  = msg;  
+  const { id } = chat;
 
-// В планах проснуться к трем ХОТЯ БЫ
+  const user = {
+    id: id,
+  };
 
-
-const testAssignments = [
-    {
-      title: "Задание 1",
-      status: "Доступно до 2023-11-15",
-      due: "Срок 2023-11-20",
-      url: "https://example.com/assignment1",
-      accessibility: true,
-    },
-    {
-      title: "Задание 2",
-      status: "Недоступно до 2023-11-16",
-      due: "Срок 2023-11-21",
-      url: "https://example.com/assignment2",
-      accessibility: false,
-    },
-    {
-      title: "Задание 3",
-      status: "Доступно до 2023-11-17",
-      due: "Срок 2023-11-22",
-      url: "https://example.com/assignment3",
-      accessibility: true,
-    },
-  ]; /* тут объяснять не надо, но мне нравится отправлять тебе послания в будущее*/
-  
-bot.on('message', async msg => {
-  const text = msg.text;
-  const chatId = msg.chat.id; /* Получаем информацию о входящих сообщениях и их отправителях */
+  const buttons = {
+    start: ['Окей'],
+    course: ['Первый курс', 'Второй курс'],
+    secondDiploma: ['Да, я получаю второй диплом', 'Нет, не получаю'],
+  };
 
   if (text === '/start') {
+    const startText =
+`*Добро пожаловать в бота-напоминалку!* Здесь вы можете следить за всем своим LMS: Дедлайны по ДЗ, экзамены, всё-всё-всё)
 
-    await bot.sendMessage(chatId, '*Добро пожаловать в бота-напоминалку!* Здесь вы можете следить за всем своим LMS: Дедлайны по ДЗ, экзамены, всё-всё-всё)',
-      { parse_mode: "Markdown" });
+Этот телеграм-бот разработали студенты второго курса Хекслета [Родион Волков](https://github.com/Hisun0) и [Антон Грейвер](https://github.com/antoshhkii).
 
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    await bot.sendMessage(chatId,
-      'Этот телеграм-бот разработали студенты второго курса Хекслета [Родион Волков](https://github.com/Hisun0) и [Антон Грейвер](https://github.com/antoshhkii).',
-      { parse_mode: "Markdown", disable_web_page_preview: true });
+Ну что, давай приступим?)`;
 
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    await bot.sendMessage(chatId,
-      'Чем могу вам помочь?');
     
+    const startOptions = { parse_mode: "Markdown", disable_web_page_preview: true };
+    const startKeyboard = new Keyboard(buttons.start, startOptions);
     
-    const setupKeyboard = {
-      keyboard: [
-        ['Первый курс', 'Второй курс']
-      ],
+    await bot.sendMessage(id, startText, startKeyboard);
+  };
 
-      resize_keyboard: true,
-      one_time_keyboard: true,
+
+  if (text === 'Окей') {
+    
+    const courseText = 'Теперь давай определимся с твоим курсом. Какой ты курс сейчас проходишь?';
+    const courseKeyboard = new Keyboard(buttons.course)
+
+    await bot.sendMessage(id, courseText, courseKeyboard);
+  };
+
+
+  if (buttons.course.includes(text)) {
+    if (text === buttons.course[0]) {
+      // Запись в бд user.course = 1;
+    } else if (text === buttons.course[1]) {
+      // Запись в бд user.couse = 2;
     }
-    
-    const initSetupKeyboard = {
-      reply_markup: JSON.stringify(setupKeyboard),
-    };
-    
-    await bot.sendMessage(chatId, 'Давай определимся с твоим курсом', initSetupKeyboard); 
 
-    if (text === 'Первый курс') {
-      //Запись в бд, открываются уроки первого курса, как их правда отличать я не ебу
-      //
-      //Я рассматриваю вариант, что на тестовом LMS аккаунте у нас будет сразу доступ ко всем
-      //Можно два тестовых на каждый курс, со вторым дипломом на каждом, там в опциях выбрать
-      await bot.sendMessage(chatId, 'Первачок, выбирай свои курсы:');
-  }}; /* Железно похуй алгоритму на текст "первый курс", кидаю на ветку и спать, время кстати 5:37 */
+    const secondDiplomaText = 'Отлично. Кажется последний вопрос. Ты получаешь второй диплом?'
+    const secondDiplomaKeyboard = new Keyboard(buttons.secondDiploma);
 
+    await bot.sendMessage(id, secondDiplomaText, secondDiplomaKeyboard);
+  };
 
-  
-//  if (text === '/subscriptions') {
-//    await bot.sendMessage(chat,id,
-//      `Вы подписаны на:`)
-//  }; <- Тут подтягивать с бд у юзера лист подписок
-
-//  if (text === '/subscribe') {
-//    await bot.sendMessage(chat,id,
-//      `Выберите курс:`)
-//  }; <- Тут подтягивать с бд у юзера лист подписок
-
-//  if (text === '/unsubscribe') {
-//    await bot.sendMessage(chat,id,
-//      `Выберите курс:`)
-//  }; <- Тут подтягивать с бд у юзера лист подписок
-
-// Здесь же еще должен быть чек на выбор
-
-}); // Тело всех алгоритмов
+  if (buttons.secondDiploma.includes(text)) {
+    if (text === buttons.secondDiploma[0]) {
+      // Запись в бд user.secondDiploma = true;
+    } else if (text === buttons.secondDiploma[1]) {
+      // Запись в бд user.secondDiploma = false;
+    }
+    console.log(user);
+  }
+});
 
