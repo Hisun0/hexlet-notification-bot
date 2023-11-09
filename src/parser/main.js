@@ -57,5 +57,7 @@ const parser = async (courses) => {
   return parsedData.reduce((acc, el) => acc.concat(el)); // убираем лишнюю вложенность
 };
 
+export default parser;
+
 const result = await parser(courses);
-firebase.set(result, 'assignments');
+result.forEach((el) => firebase.push(el, 'assignments'));
