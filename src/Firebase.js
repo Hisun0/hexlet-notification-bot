@@ -46,7 +46,7 @@ class Firebase {
   }
 
   push(data, key) {
-    push(ref(this.db, key), data);
+    return push(ref(this.db, key), data).key;
   }
 
   update(data, key, id) {
