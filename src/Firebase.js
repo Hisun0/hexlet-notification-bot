@@ -1,6 +1,13 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, set, get, child } from 'firebase/database';
+import { getDatabase, ref, update, get, child, push } from 'firebase/database';
 import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+
+const sortKeys = (data) => {
+  const sortedArray = Object.entries(data).sort(([key1], [key2]) =>
+    key1.localeCompare(key2)
+  );
+  return Object.fromEntries(sortedArray);
+};
 
 class Firebase {
   static id = 0;
@@ -25,23 +32,33 @@ class Firebase {
     }
   }
 
-  get(key) {
+  async get(key) {
     const dbRef = ref(getDatabase());
-    get(child(dbRef, key))
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          console.log(snapshot.val());
-        } else {
-          console.log('No data available');
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    try {
+      const snapshot = await get(child(dbRef, key));
+      if (!snapshot.exists()) {
+        throw new Error('No data available!');
+      }
+      return snapshot.val();
+    } catch (err) {
+      return err;
+    }
   }
 
-  set(data, key) {
-    data.forEach((el) => set(ref(this.db, `/${key}/${Firebase.id++}`), el));
+  push(data, key) {
+    push(ref(this.db, key), data);
+  }
+
+  update(data, key, id) {
+    update(ref(this.db, `${key}/${id}`), data);
+  }
+
+  async getId(data, key) {
+    const dbData = await this.get(key);
+    const sortedData = sortKeys(data);
+    return Object.entries(dbData).find(
+      ([, value]) => JSON.stringify(value) === JSON.stringify(sortedData)
+    )[0];
   }
 }
 
