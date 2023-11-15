@@ -1,6 +1,6 @@
 import TelegramBot from "node-telegram-bot-api";
 
-import { Keyboard } from "./src/Keyboard.js";
+import { Keyboard } from "./src/classes/Keyboard.js";
 import { Firebase } from './src/classes/Firebase.js';
 
 import telegramTemplates from "./data/telegram-templates.js";
@@ -17,7 +17,6 @@ const { prompts, buttons } = telegramTemplates;
 const restartSyncTriggers = buttons.start.concat(buttons.restart);
 
 bot.on ('message', async msg => {
-  const coll = firebase.get(id);
   const { text, chat }  = msg;  
   const { id } = chat;
   
@@ -28,15 +27,12 @@ bot.on ('message', async msg => {
     await bot.sendMessage(id, prompts.start, startKeyboard);
   }; /* Welcome message */
 
-  const firebaseID = getId
 
   if (text === '/restart') {
     const restartKeyboard = new Keyboard(buttons.restart);
- 
     //Removing whole user from 'Users' Collection
     //Pushing user with same ID to 'Users' Collection
     //How i think that will work:
-    const coll = firebase.get(id);
     firebase.remove('users', id);
     firebase.push('users', id);
     await bot.sendMessage(id, prompts.restart, restartKeyboard);
@@ -46,17 +42,17 @@ bot.on ('message', async msg => {
     const courseKeyboard = new Keyboard(buttons.course)
 
     await bot.sendMessage(id, prompts.course, courseKeyboard);
-  }; /* Course sync */
+  }; /* User Init */
 
 
   if (buttons.course.includes(text)) {
     
     if (text === buttons.course[0]) {
-      firebase.update(course, 'users', )
+      //Set key 'Grade' to 1 if User typed another string from keyboard
     } else if (text === buttons.course[1]) {
       //Set key 'Grade' to 2 if User typed another string from keyboard
     }
-    const secondDiplomaKeyboard = new Keyboard(buttons.secondDiplom a);
+    const secondDiplomaKeyboard = new Keyboard(buttons.secondDiploma);
 
     await bot.sendMessage(id, prompts.secondDiploma, secondDiplomaKeyboard);
   }; /* Course sync */
