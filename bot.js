@@ -1,7 +1,8 @@
 import TelegramBot from "node-telegram-bot-api";
 
 import { Keyboard } from "./src/classes/Keyboard.js";
-import { Firebase } from './src/classes/Firebase.js';
+// import { Assignments } from "./src/classes/Assignment.js";
+import Firebase from './src/classes/Firebase.js';
 
 import telegramTemplates from "./data/telegram-templates.js";
 import config from "./config.js"; 
@@ -10,6 +11,11 @@ const { token } = config;
 
 const firebase = new Firebase(config);
 await firebase.auth();
+
+// const coll = await firebase.get('assignments');
+// console.log(coll)
+// const assignments = new Assignments(coll);
+// console.log(assignments.getAvailableAssignments().createPrompts());
 
 const bot = new TelegramBot(token, {polling: true});
 
