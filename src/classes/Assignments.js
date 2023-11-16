@@ -1,7 +1,7 @@
 // import Firebase from "./Firebase.js";
 // import config from "../../config.js";
 
-export class Assignments {
+class Assignments {
   constructor(coll) {
     this.coll = coll;
   }
@@ -31,3 +31,5 @@ export class Assignments {
 // console.log(coll)
 // const assignments = new Assignments(coll);
 // console.log(assignments.getAvailableAssignments());
+
+export default Assignments;
