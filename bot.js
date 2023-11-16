@@ -69,10 +69,10 @@ bot.on ('message', async msg => {
   }; /* SecondDiploma sync*/
 
   if(buttons.registration.includes(text)) {
-    if(text === buttons.registration[1]) {
-      bot.sendMessage(id, prompts.restart, buttons.restart)
-    } else if (text === buttons.registration[0]) {
-      bot.sendMessage(id, prompts.finish, buttons.finish[0])
+    if(text === buttons.registration[0]) {
+      bot.sendMessage(id, prompts.restart, buttons.finish[0])
+    } else if (text === buttons.registration[1]) {
+      bot.sendMessage(id, prompts.finish, buttons.finish[1])
     }
   } /* Are you sure?*/
 });
