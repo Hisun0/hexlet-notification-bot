@@ -52,9 +52,10 @@ bot.on('message', async (msg) => {
   } /* User Init */
 
   if (buttons.course.includes(text)) {
-    if (text === buttons.course[0]) {
+    const [firstCourse, secondCourse] = buttons.course;
+    if (text === firstCourse) {
       //Set key 'Grade' to 1 if User typed another string from keyboard
-    } else if (text === buttons.course[1]) {
+    } else if (text === secondCourse) {
       //Set key 'Grade' to 2 if User typed another string from keyboard
     }
     const secondDiplomaKeyboard = new Keyboard(buttons.secondDiploma);
@@ -63,9 +64,10 @@ bot.on('message', async (msg) => {
   } /* Course sync */
 
   if (buttons.secondDiploma.includes(text)) {
-    if (text === buttons.secondDiploma[0]) {
+    const [withSecondDiploma, withoutSecondDiploma] = buttons.secondDiploma;
+    if (text === withSecondDiploma) {
       firebase.push();
-    } else if (text === buttons.secondDiploma[1]) {
+    } else if (text === withoutSecondDiploma) {
       // Запись в бд user.secondDiploma = false;
     }
     const registrationKeyboard = new Keyboard(buttons.registration);
@@ -74,10 +76,12 @@ bot.on('message', async (msg) => {
   } /* SecondDiploma sync*/
 
   if (buttons.registration.includes(text)) {
-    if (text === buttons.registration[0]) {
-      bot.sendMessage(id, prompts.restart, buttons.finish[0]);
-    } else if (text === buttons.registration[1]) {
-      bot.sendMessage(id, prompts.finish, buttons.finish[1]);
+    const [success, unsuccess] = buttons.registration;
+    const [restart, cron] = buttons.finish;
+    if (text === success) {
+      bot.sendMessage(id, prompts.restart, restart);
+    } else if (text === unsuccess) {
+      bot.sendMessage(id, prompts.finish, cron);
     }
   } /* Are you sure?*/
 });
